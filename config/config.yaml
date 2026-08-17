@@ -1,0 +1,12 @@
+env: test
+
+environments:
+  test:
+    base_url: "http://10.100.5.154/node"
+    username: "liyazhou"
+    password: "tingyu@123"
+
+
+request:
+  timeout: 10
+  verify_ssl: false
