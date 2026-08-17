@@ -11,13 +11,15 @@ class ClientUserApi:
     def __init__(self, client: HttpClient):
         self.client = client
     def get_public_key(self) -> requests.Response:
-        return self.client.get(self.NACL_PUBLIC_KEY_PATH)
+        return self.client.post(self.NACL_PUBLIC_KEY_PATH)
     def login(
         self,
         username: str,
         password: str,
         *,
-        encrypt: bool = True,
+        need_encrypt: bool = True,
+        mode: str = "password",
+        sn: str | None = None,
         **extra_fields: Any,
     ) -> requests.Response:
         """
@@ -26,7 +28,7 @@ class ClientUserApi:
         extra_fields 可传验证码、设备编号等额外登录参数。
         """
         login_password = password
-        if encrypt:
+        if need_encrypt:
             public_key_response = self.get_public_key()
             public_key_response.raise_for_status()
             public_key_result = public_key_response.json()
@@ -34,13 +36,17 @@ class ClientUserApi:
                 raise RuntimeError(
                     f"获取公钥失败：{public_key_result}"
                 )
-            public_key = public_key_result["data"]["publicKey"]
+            public_key = public_key_result["data"]["signSk"]
             login_password = encrypt(password, public_key)
         payload = {
             "username": username,
             "password": login_password,
-            **extra_fields,
+            "mode": mode,
         }
+        if sn is not None:
+            payload["sn"] = sn
+        payload.update(extra_fields)
+
         return self.client.post(
             self.LOGIN_PATH,
             json=payload,
