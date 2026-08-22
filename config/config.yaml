@@ -1,10 +1,16 @@
-env: test
+# 执行测试的环境在此更改
+env: public
 
 environments:
-  test:
+  intranet:
     base_url: "http://10.100.5.154/node"
-    username: "liyazhou"
-    password: "tingyu@123"
+    client_username: "liyazhou"
+    client_password: "tingyu@123"
+
+  public:
+    base_url: "http://106.120.242.148:20180/node"
+    client_username: "liyazhou"
+    client_password: "tingyu@123"
 
 
 request:

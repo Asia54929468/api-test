@@ -23,14 +23,14 @@ class ClientTokenManager:
 
             result = response.json()
 
-            if result.get("code") != 0:
+            if result.get("code") != 200:
                 raise RuntimeError(f"客户端登录失败：{result}")
 
-            token = result["data"]["access_token"]
+            token = result["token"]
 
             if not token:
                 raise RuntimeError(
-                    f"登录响应中没有 access_token：{result}"
+                    f"登录响应中没有 token：{result}"
                 )
 
             self._token = token

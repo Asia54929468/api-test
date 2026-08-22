@@ -18,7 +18,7 @@ class HttpClient:
 
     def set_token(self, token: str) -> None:
         self.session.headers.update({
-            "Authorization": f"Bearer {token}"
+            "Authorization": f"{token}"
         })
 
     # 拼接url并请求接口

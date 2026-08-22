@@ -6,6 +6,7 @@ from common.crypto import encrypt
 class ClientUserApi:
     NACL_PUBLIC_KEY_PATH = "/api/v1/common/nacl-public-key"
     LOGIN_PATH = "/api/v1/common/login"
+    USER_INFO_PATH = "/api/v1/user/lists/4"
 
 
     def __init__(self, client: HttpClient):
@@ -32,11 +33,11 @@ class ClientUserApi:
             public_key_response = self.get_public_key()
             public_key_response.raise_for_status()
             public_key_result = public_key_response.json()
-            if public_key_result.get("code") != 0:
+            if public_key_result.get("code") != 200:
                 raise RuntimeError(
                     f"获取公钥失败：{public_key_result}"
                 )
-            public_key = public_key_result["data"]["signSk"]
+            public_key = public_key_result["signSk"]
             login_password = encrypt(password, public_key)
         payload = {
             "username": username,
@@ -51,3 +52,8 @@ class ClientUserApi:
             self.LOGIN_PATH,
             json=payload,
         )
+    def get_user_info(self) -> requests.Response:
+        """
+        获取当前登录用户信息。
+        """
+        return self.client.get(self.USER_INFO_PATH)

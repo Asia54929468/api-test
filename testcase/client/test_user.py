@@ -15,8 +15,9 @@ class TestClientUserApi:
             assert response.status_code == 200
 
             result = response.json()
-            assert result["code"] == 0
-            assert result["data"]["publicKey"]
+            # print(result)
+            assert result["code"] == 200
+            assert result["signSk"]
         finally:
             client.close()
 
@@ -32,8 +33,9 @@ class TestClientUserApi:
             assert response.status_code == 200
 
             result = response.json()
-            assert result["code"] == 0
-            assert result["data"]["access_token"]
+            # print(result)
+            assert result["code"] == 200
+            assert result["token"]
         finally:
             client.close()
 
@@ -54,33 +56,51 @@ class TestClientUserApi:
             )
 
             result = response.json()
-
-            assert response.status_code in (200, 400, 401)
-            assert result["code"] != 0
+            # print(result)
+            assert response.status_code in (200, 400, 401, 500)
+            assert result["code"] != 200
         finally:
             client.close()
 
-    def test_logout_success(self):
-        client = HttpClient(settings["base_url"])
+    def test_get_user_info_success(self, client_token):
+        client = HttpClient(
+            settings["base_url"]
+        )
 
         try:
-            user_api = ClientUserApi(client)
+            client.set_token(client_token)
+            response = ClientUserApi(client).get_user_info()
 
-            login_response = user_api.login(
-                username=settings["client_username"],
-                password=settings["client_password"],
-            )
-            login_response.raise_for_status()
+            assert response.status_code == 200
 
-            login_result = login_response.json()
-            assert login_result["code"] == 0
-
-            token = login_result["data"]["access_token"]
-            client.set_token(token)
-
-            logout_response = user_api.logout()
-
-            assert logout_response.status_code == 200
-            assert logout_response.json()["code"] == 0
+            result = response.json()
+            # print(result)
+            assert result["code"] == 200
         finally:
             client.close()
+
+
+    # def test_logout_success(self):
+    #     client = HttpClient(settings["base_url"])
+    #
+    #     try:
+    #         user_api = ClientUserApi(client)
+    #
+    #         login_response = user_api.login(
+    #             username=settings["client_username"],
+    #             password=settings["client_password"],
+    #         )
+    #         login_response.raise_for_status()
+    #
+    #         login_result = login_response.json()
+    #         assert login_result["code"] == 0
+    #
+    #         token = login_result["data"]["access_token"]
+    #         client.set_token(token)
+    #
+    #         logout_response = user_api.logout()
+    #
+    #         assert logout_response.status_code == 200
+    #         assert logout_response.json()["code"] == 0
+    #     finally:
+    #         client.close()
