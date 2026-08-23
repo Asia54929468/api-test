@@ -2,7 +2,4 @@ import pytest
 
 
 if __name__ == "__main__":
-    pytest.main([
-        "-v",
-        "testcase"
-    ])
+    raise SystemExit(pytest.main())

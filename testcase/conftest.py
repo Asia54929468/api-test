@@ -5,6 +5,26 @@ from common.config import settings
 from common.http_client import HttpClient
 from common.token_manager import client_token_manager
 
+from common.logging import setup_logging, get_logger
+
+
+# def pytest_configure(config):
+#     """pytest启动时执行一次。"""
+#     setup_logging()
+#
+#     logger = get_logger("pytest")
+#     logger.info("=" * 60)
+#     logger.info("pytest接口自动化测试开始")
+#     logger.info("=" * 60)
+#
+#
+# def pytest_unconfigure(config):
+#     """pytest执行结束时调用。"""
+#     logger = get_logger("pytest")
+#     logger.info("=" * 60)
+#     logger.info("pytest接口自动化测试结束")
+#     logger.info("=" * 60)
+
 
 @pytest.fixture(scope="session")
 def client_token() -> str:
