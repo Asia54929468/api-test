@@ -6,7 +6,7 @@ from common.crypto import encrypt
 class ClientUserApi:
     NACL_PUBLIC_KEY_PATH = "/api/v1/common/nacl-public-key"
     LOGIN_PATH = "/api/v1/common/login"
-    USER_INFO_PATH = "/api/v1/user/lists/4"
+    USER_INFO_PATH = "/api/v1/user/lists/{id}"
 
 
     def __init__(self, client: HttpClient):
@@ -56,4 +56,4 @@ class ClientUserApi:
         """
         获取当前登录用户信息。
         """
-        return self.client.get(self.USER_INFO_PATH)
+        return self.client.get(self.USER_INFO_PATH, path_params = {"id":4})
