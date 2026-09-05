@@ -78,26 +78,6 @@ class HttpClient:
             **kwargs,
         )
 
-        try:
-            response_body = json.dumps(
-                response.json(),
-                ensure_ascii=False,
-                indent=2
-            )
-        except ValueError:
-            response_body = response.text
-        print("\n================ 请求信息 ================")
-        print(f"请求方法：{response.request.method}")
-        print(f"请求URL：{response.request.url}")
-        print(f"请求头：{dict(response.request.headers)}")
-        print(f"请求体：{response.request.body}")
-        print("================ 响应信息 ================")
-        print(f"状态码：{response.status_code}")
-        print(f"响应耗时：{response.elapsed.total_seconds():.3f} 秒")
-        print(f"响应头：{dict(response.headers)}")
-        print(f"响应体：\n{response_body}")
-        print("==========================================\n")
-
         return response
 
     def get(self, path: str, path_params: dict | None = None, **kwargs):

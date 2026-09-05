@@ -4,26 +4,21 @@ from api.client.user_api import ClientUserApi
 from common.config import settings
 from common.http_client import HttpClient
 from common.token_manager import client_token_manager
+from common.logger import setup_logging, get_logger
 
-from common.logging import setup_logging, get_logger
+def pytest_addoption(parser):
+    parser.addoption(
+        "--no-log-file",
+        action="store_true",
+        default=False,
+        help="不生成日志文件，仅由pytest捕获日志",
+    )
 
-
-# def pytest_configure(config):
-#     """pytest启动时执行一次。"""
-#     setup_logging()
-#
-#     logger = get_logger("pytest")
-#     logger.info("=" * 60)
-#     logger.info("pytest接口自动化测试开始")
-#     logger.info("=" * 60)
-#
-#
-# def pytest_unconfigure(config):
-#     """pytest执行结束时调用。"""
-#     logger = get_logger("pytest")
-#     logger.info("=" * 60)
-#     logger.info("pytest接口自动化测试结束")
-#     logger.info("=" * 60)
+def pytest_configure(config):
+    no_log_file = config.getoption("--no-log-file")
+    setup_logging(
+        write_to_file=not no_log_file,
+    )
 
 
 @pytest.fixture(scope="session")

@@ -1,9 +1,12 @@
+from unittest import case
+
 import pytest
 
 from api.client.user_api import ClientUserApi
 from common.config import settings
 from common.data import load_data
 from common.http_client import HttpClient
+from common.http_logging import log_http_response
 
 
 class TestClientUserApi:
@@ -12,11 +15,14 @@ class TestClientUserApi:
 
         try:
             response = ClientUserApi(client).get_public_key()
+            result = response.json()
+
+            log_http_response(
+                response,
+                title="获取公钥成功",
+            )
 
             assert response.status_code == 200
-
-            result = response.json()
-            # print(result)
             assert result["code"] == 200
             assert result["signSk"]
         finally:
@@ -48,6 +54,12 @@ class TestClientUserApi:
                 password=password,
             )
             result = response.json()
+
+            log_http_response(
+                response,
+                title=case["title"],
+            )
+
             # 校验 HTTP 状态码
             assert response.status_code in expected["status_code"]
             # 正常用例：校验 code 等于预期值
@@ -68,37 +80,14 @@ class TestClientUserApi:
         try:
             client.set_token(client_token)
             response = ClientUserApi(client).get_user_info()
+            result = response.json()
+
+            log_http_response(
+                response,
+                title="获取用户信息成功"
+            )
 
             assert response.status_code == 200
-
-            result = response.json()
-            # print(result)
             assert result["code"] == 200
         finally:
             client.close()
-
-
-    # def test_logout_success(self):
-    #     client = HttpClient(settings["base_url"])
-    #
-    #     try:
-    #         user_api = ClientUserApi(client)
-    #
-    #         login_response = user_api.login(
-    #             username=settings["client_username"],
-    #             password=settings["client_password"],
-    #         )
-    #         login_response.raise_for_status()
-    #
-    #         login_result = login_response.json()
-    #         assert login_result["code"] == 0
-    #
-    #         token = login_result["data"]["access_token"]
-    #         client.set_token(token)
-    #
-    #         logout_response = user_api.logout()
-    #
-    #         assert logout_response.status_code == 200
-    #         assert logout_response.json()["code"] == 0
-    #     finally:
-    #         client.close()
