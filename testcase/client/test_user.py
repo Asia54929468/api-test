@@ -10,16 +10,16 @@ from common.http_logging import log_http_response
 
 
 class TestClientUserApi:
-    def test_get_public_key(self):
+    def test_get_public_key(self, log_http):
         client = HttpClient(settings["base_url"])
 
         try:
             response = ClientUserApi(client).get_public_key()
             result = response.json()
 
-            log_http_response(
+            log_http(
                 response,
-                title="获取公钥成功",
+                title="获取公钥",
             )
 
             assert response.status_code == 200
@@ -36,7 +36,7 @@ class TestClientUserApi:
         ),
         ids=lambda case: case["title"],
     )
-    def test_login(self, case: dict):
+    def test_login(self, case: dict, log_http):
         request_data = case["request"]
         expected = case["expected"]
         # 优先读取 YAML 中直接配置的值，如果没有，则根据 xxx_key 从 settings 中读取
@@ -55,7 +55,7 @@ class TestClientUserApi:
             )
             result = response.json()
 
-            log_http_response(
+            log_http(
                 response,
                 title=case["title"],
             )
@@ -72,7 +72,7 @@ class TestClientUserApi:
             client.close()
 
 
-    def test_get_user_info_success(self, client_token):
+    def test_get_user_info_success(self, client_token, log_http):
         client = HttpClient(
             settings["base_url"]
         )
@@ -82,7 +82,7 @@ class TestClientUserApi:
             response = ClientUserApi(client).get_user_info()
             result = response.json()
 
-            log_http_response(
+            log_http(
                 response,
                 title="获取用户信息成功"
             )
