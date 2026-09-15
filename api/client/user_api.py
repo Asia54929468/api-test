@@ -5,14 +5,25 @@ from common.crypto import encrypt
 
 class ClientUserApi:
     NACL_PUBLIC_KEY_PATH = "/api/v1/common/nacl-public-key"
+    ACCOUNT_SETTING_PATH = "/api/v1/common/account-setting"
     LOGIN_PATH = "/api/v1/common/login"
+    LOGOUT_PATH = "/api/v1/common/logout"
     USER_INFO_PATH = "/api/v1/user/lists/{id}"
-
+    USER_ORGANIZATIONS_PATH = "/api/v1/user/organizations"
+    CHANGE_PASSWORD_PATH = "/api/v1/common/change-password"
 
     def __init__(self, client: HttpClient):
         self.client = client
     def get_public_key(self) -> requests.Response:
+        """
+        获取公钥。
+        """
         return self.client.post(self.NACL_PUBLIC_KEY_PATH)
+    def get_account_setting(self) -> requests.Response:
+        """
+        获取账号配置。
+        """
+        return self.client.get(self.ACCOUNT_SETTING_PATH)
     def login(
         self,
         username: str,
@@ -52,8 +63,36 @@ class ClientUserApi:
             self.LOGIN_PATH,
             json=payload,
         )
+    def logout(self) -> requests.Response:
+        """
+        退出当前登录用户。
+        """
+        return self.client.post(self.LOGOUT_PATH)
     def get_user_info(self) -> requests.Response:
         """
         获取当前登录用户信息。
         """
         return self.client.get(self.USER_INFO_PATH, path_params = {"id":4})
+    def get_user_organizations(self) -> requests.Response:
+        """
+        获取当前用户的组织列表。
+        """
+        return self.client.get(self.USER_ORGANIZATIONS_PATH)
+
+    def change_password(
+            self,
+            password: str,
+            new_password: str,
+    ) -> requests.Response:
+        """
+        修改当前登录用户密码。
+        """
+        payload = {
+            "password": password,
+            "newPassword": new_password,
+        }
+
+        return self.client.post(
+            self.CHANGE_PASSWORD_PATH,
+            json=payload,
+        )

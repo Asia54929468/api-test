@@ -48,3 +48,23 @@ test_login:
       code: 500
       message: "用户名或密码错误"
       token_required: false
+
+
+test_change_password:
+  - title: 修改密码成功
+    request:
+      password_key: client_password
+      new_password: "Tingyu@123"
+    expected:
+      status_code: [200]
+      code: 200
+      restore_password: true
+
+  - title: 原密码错误
+    request:
+      password: "WrongPassword123!"
+      new_password: "Tingyu@123"
+    expected:
+      status_code: [200, 400, 401, 500]
+      code: 500
+      restore_password: false

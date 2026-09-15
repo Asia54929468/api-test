@@ -27,12 +27,12 @@ SENSITIVE_HEADERS = {
 
 # 请求体、响应体、URL 查询参数中需要脱敏的字段
 SENSITIVE_FIELDS = {
-    "password",
-    "token",
-    "access_token",
-    "refresh_token",
-    "secret",
-    "client_secret",
+    # "password",
+    # "token",
+    # "access_token",
+    # "refresh_token",
+    # "secret",
+    # "client_secret",
 }
 
 # 详情日志中保留的请求头
