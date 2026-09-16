@@ -68,11 +68,11 @@ class ClientUserApi:
         退出当前登录用户。
         """
         return self.client.post(self.LOGOUT_PATH)
-    def get_user_info(self) -> requests.Response:
+    def get_user_info(self, user_id: int | str) -> requests.Response:
         """
         获取当前登录用户信息。
         """
-        return self.client.get(self.USER_INFO_PATH, path_params = {"id":4})
+        return self.client.get(self.USER_INFO_PATH, path_params = {"id":user_id})
     def get_user_organizations(self) -> requests.Response:
         """
         获取当前用户的组织列表。

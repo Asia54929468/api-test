@@ -4,7 +4,7 @@ from requests import Response
 from api.client.user_api import ClientUserApi
 from common.config import settings
 from common.http_client import HttpClient
-from common.token_manager import client_token_manager
+from common.auth_manager import client_auth_manager
 from common.logger import setup_logging, get_logger
 
 from common.http_logging import (
@@ -29,6 +29,26 @@ def pytest_configure(config):
         write_to_file=not no_log_file,
     )
 
+
+def client_user_context():
+    client = HttpClient(settings["base_url"])
+    try:
+        response = ClientUserApi(client).login(
+            username=settings["client_username"],
+            password=settings["client_password"],
+        )
+        result = response.json()
+        assert response.status_code == 200
+        assert result["code"] == 200
+        assert result.get("token")
+        assert result.get("user")
+        assert result["user"].get("id") is not None
+        return {
+            "token": result["token"],
+            "user_id": result["user"]["id"],
+        }
+    finally:
+        client.close()
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -113,8 +133,14 @@ def client_token() -> str:
     """
     整个测试会话只执行一次登录。
     """
-    return client_token_manager.get_token()
+    return client_auth_manager.get_token()
 
+@pytest.fixture(scope="session")
+def client_user_id() -> int | str:
+    """
+    获取当前登录用户 ID。
+    """
+    return client_auth_manager.get_user_id()
 
 @pytest.fixture(scope="session")
 def client_http(client_token: str):

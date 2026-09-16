@@ -38,7 +38,6 @@ class TestClientUserApi:
             log_http(
                 response,
                 title="获取账号配置成功",
-                details=True
             )
 
             assert response.status_code == 200
@@ -112,9 +111,7 @@ class TestClientUserApi:
             client.close()
 
     def test_logout(self, client_token, log_http):
-        client = HttpClient(
-            settings["base_url"]
-        )
+        client = HttpClient(settings["base_url"])
 
         try:
             client.set_token(client_token)
@@ -133,14 +130,12 @@ class TestClientUserApi:
         finally:
             client.close()
 
-    def test_get_user_info(self, client_token, log_http):
-        client = HttpClient(
-            settings["base_url"]
-        )
+    def test_get_user_info(self, client_token, client_user_id, log_http):
+        client = HttpClient(settings["base_url"])
 
         try:
             client.set_token(client_token)
-            response = ClientUserApi(client).get_user_info()
+            response = ClientUserApi(client).get_user_info(user_id=client_user_id)
             result = response.json()
 
             log_http(
@@ -154,9 +149,7 @@ class TestClientUserApi:
             client.close()
 
     def test_get_user_organizations(self, client_token, log_http):
-        client = HttpClient(
-            settings["base_url"]
-        )
+        client = HttpClient(settings["base_url"])
 
         try:
             client.set_token(client_token)
@@ -211,7 +204,6 @@ class TestClientUserApi:
             log_http(
                 response,
                 title=case["title"],
-                details=True
             )
 
             # 接口实际修改成功后，需要在 finally 中恢复密码
@@ -249,7 +241,6 @@ class TestClientUserApi:
                     log_http(
                         login_response,
                         title="新密码登录成功",
-                        details=True
                     )
 
                     assert login_response.status_code == 200
@@ -272,7 +263,6 @@ class TestClientUserApi:
                     log_http(
                         restore_response,
                         title="恢复原密码",
-                        details=True
                     )
 
                     assert (restore_response.status_code == 200)
