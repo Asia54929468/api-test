@@ -4,7 +4,7 @@ from requests import Response
 from api.client.user_api import ClientUserApi
 from common.config import settings
 from common.http_client import HttpClient
-from common.auth_manager import client_auth_manager
+from common.auth_manager import client_auth_manager,client_desktop_manager
 from common.logger import setup_logging, get_logger
 
 from common.http_logging import (
@@ -30,26 +30,6 @@ def pytest_configure(config):
     )
 
 
-def client_user_context():
-    client = HttpClient(settings["base_url"])
-    try:
-        response = ClientUserApi(client).login(
-            username=settings["client_username"],
-            password=settings["client_password"],
-        )
-        result = response.json()
-        assert response.status_code == 200
-        assert result["code"] == 200
-        assert result.get("token")
-        assert result.get("user")
-        assert result["user"].get("id") is not None
-        return {
-            "token": result["token"],
-            "user_id": result["user"]["id"],
-        }
-    finally:
-        client.close()
-
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """保存测试用例各执行阶段的结果。"""
@@ -60,7 +40,6 @@ def pytest_runtest_makereport(item, call):
 def log_http(request):
     """
     输出当前被测接口的日志。
-
     默认只输出摘要，用例失败时自动输出完整详情；
     details=True时立即输出完整详情。
     """
@@ -143,6 +122,13 @@ def client_user_id() -> int | str:
     return client_auth_manager.get_user_id()
 
 @pytest.fixture(scope="session")
+def client_desktop_id() -> int | str:
+    """
+    获取桌面列表中首个桌面 ID。
+    """
+    return client_desktop_manager.get_desktop_id()
+
+@pytest.fixture(scope="session")
 def client_http(client_token: str):
     """
     已携带客户端 Token 的 HTTP 客户端。
@@ -151,11 +137,8 @@ def client_http(client_token: str):
         base_url=settings["base_url"],
         token=client_token,
     )
-
     yield client
-
     client.close()
-
 
 @pytest.fixture(scope="session")
 def client_user_api(client_http: HttpClient):

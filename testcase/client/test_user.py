@@ -6,7 +6,6 @@ from api.client.user_api import ClientUserApi
 from common.config import settings
 from common.data import load_data
 from common.http_client import HttpClient
-from common.http_logging import log_http_response
 
 
 class TestClientUserApi:
