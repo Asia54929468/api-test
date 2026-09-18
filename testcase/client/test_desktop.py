@@ -63,3 +63,24 @@ class TestClientDesktopApi:
             )
         finally:
             client.close()
+
+    def test_startup_desktop(self, client_token, client_desktop_id, log_http):
+        client = HttpClient(settings["base_url"])
+
+        try:
+            client.set_token(client_token)
+            response = ClientDesktopApi(client).startup_desktop(
+                desktop_id=client_desktop_id,
+            )
+            result = response.json()
+
+            log_http(
+                response,
+                title="桌面开机成功",
+                details=True
+            )
+
+            assert response.status_code == 200
+            assert result["code"] == 200
+        finally:
+            client.close()

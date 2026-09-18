@@ -99,6 +99,7 @@ class ClientDesktopManager:
             return desktop_id
         finally:
             client.close()
+
     def clear_desktop(self) -> None:
         self._desktop_id = None
 

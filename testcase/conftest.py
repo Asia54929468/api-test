@@ -4,7 +4,7 @@ from requests import Response
 from api.client.user_api import ClientUserApi
 from common.config import settings
 from common.http_client import HttpClient
-from common.auth_manager import client_auth_manager,client_desktop_manager
+from common.manager import client_auth_manager,client_desktop_manager
 from common.logger import setup_logging, get_logger
 
 from common.http_logging import (
